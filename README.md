@@ -19,8 +19,28 @@
 
 ## 📸 Screenshots
 
-*(Add screenshots here)*
-> **Note:** Insert placeholder images or GIFs demonstrating the dashboard, Kanban board, CRM detail drawers, and the dark-mode glassmorphism UI.
+<table align="center" border="0" style="width: 100%; border-collapse: collapse;">
+  <tr>
+    <td width="50%" align="center">
+      <img src="screenshots/dashboard.png" alt="Analytics Dashboard" width="100%" style="border-radius: 8px;" />
+      <br /><em>Analytics Dashboard: Multi-platform data aggregation & platform breakdown</em>
+    </td>
+    <td width="50%" align="center">
+      <img src="screenshots/kanban.png" alt="Content Workflow Kanban" width="100%" style="border-radius: 8px;" />
+      <br /><em>Content Workflow: Interactive Kanban board with voting system</em>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <img src="screenshots/crm.png" alt="Sponsors CRM Drawer" width="100%" style="border-radius: 8px;" />
+      <br /><em>Sponsors CRM: Detailed sponsor profiles, interaction logs, & revenue tracking</em>
+    </td>
+    <td width="50%" align="center">
+      <img src="screenshots/finance.png" alt="Finance Engine" width="100%" style="border-radius: 8px;" />
+      <br /><em>Finance: Complete invoicing engine, PDF generation, and monthly revenue metrics</em>
+    </td>
+  </tr>
+</table>
 
 ## ✨ Features
 
