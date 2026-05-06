@@ -58,7 +58,9 @@ app.get('/api/health', (req, res) => {
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, '../client/dist');
-  console.log('🚀 Serving frontend from:', distPath);
+  console.log('📂 dist path:', distPath);
+  console.log('🔍 dist exists:', fs.existsSync(distPath));
+  console.log('📑 dist contents:', fs.existsSync(distPath) ? fs.readdirSync(distPath) : 'FOLDER NOT FOUND');
   
   app.use(express.static(distPath));
   
