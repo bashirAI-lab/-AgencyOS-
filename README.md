@@ -19,28 +19,32 @@
 
 ## 📸 Screenshots
 
-<table align="center" border="0" style="width: 100%; border-collapse: collapse;">
-  <tr>
-    <td width="50%" align="center">
-      <img src="screenshots/dashboard.png" alt="Analytics Dashboard" width="100%" style="border-radius: 8px;" />
-      <br /><em>Analytics Dashboard: Multi-platform data aggregation & platform breakdown</em>
-    </td>
-    <td width="50%" align="center">
-      <img src="screenshots/kanban.png" alt="Content Workflow Kanban" width="100%" style="border-radius: 8px;" />
-      <br /><em>Content Workflow: Interactive Kanban board with voting system</em>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" align="center">
-      <img src="screenshots/crm.png" alt="Sponsors CRM Drawer" width="100%" style="border-radius: 8px;" />
-      <br /><em>Sponsors CRM: Detailed sponsor profiles, interaction logs, & revenue tracking</em>
-    </td>
-    <td width="50%" align="center">
-      <img src="screenshots/finance.png" alt="Finance Engine" width="100%" style="border-radius: 8px;" />
-      <br /><em>Finance: Complete invoicing engine, PDF generation, and monthly revenue metrics</em>
-    </td>
-  </tr>
-</table>
+![Dashboard](screenshots/dashboard.png)
+*Analytics Dashboard: Multi-platform data aggregation & platform breakdown*
+
+![Dashboard Filtered](screenshots/dashboard-filtered.png)
+*Analytics Dashboard: Interactive platform filtering*
+
+![Workflow](screenshots/workflow.png)
+*Content Workflow: Interactive Kanban board with voting system*
+
+![Sponsors CRM](screenshots/crm.png)
+*Sponsors CRM: Comprehensive sponsor profiles and lists*
+
+![Sponsors CRM Drawer](screenshots/crm-drawer.png)
+*Sponsors CRM: Detailed sponsor profiles, interaction logs, & revenue tracking*
+
+![Finance Engine](screenshots/finance.png)
+*Finance: Complete invoicing engine, PDF generation, and monthly revenue metrics*
+
+![Calendar](screenshots/calendar.png)
+*Calendar: Centralized content scheduling*
+
+![Tasks](screenshots/tasks.png)
+*Task Management: Production roles and statuses*
+
+![Arabic Support](screenshots/arabic.png)
+*Global Ready: Full RTL Arabic support natively integrated*
 
 ## ✨ Features
 
