@@ -143,7 +143,7 @@ export default function Calendar() {
                     <p className="font-medium text-sm">{isRTL ? ev.title_ar || ev.title : ev.title}</p>
                     <p className="text-xs text-white/40">{ev.start_time} - {ev.end_time} • {t(ev.type)}</p>
                   </div>
-                  <button onClick={async () => { await api.deleteEvent(ev.id); loadEvents(); setSelectedDay({...selectedDay, events: selectedDay.events.filter(e => e.id !== ev.id)}); }}
+                  <button onClick={async () => { await api.deleteEvent(ev.id); loadEvents(); setSelectedDay({ ...selectedDay, events: selectedDay.events.filter(e => e.id !== ev.id) }); }}
                     className="p-1.5 hover:bg-red-500/10 rounded-lg text-white/20 hover:text-red-400"><X size={14} /></button>
                 </div>
               ))}
@@ -162,17 +162,17 @@ export default function Calendar() {
             </div>
             <form onSubmit={handleCreate} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-sm text-white/60 mb-1">{t('title')} (EN)</label><input value={form.title} onChange={e => setForm({...form, title: e.target.value})} className="input-field" required /></div>
-                <div><label className="block text-sm text-white/60 mb-1">{t('title')} (AR)</label><input value={form.title_ar} onChange={e => setForm({...form, title_ar: e.target.value})} className="input-field" dir="rtl" /></div>
+                <div><label className="block text-sm text-white/60 mb-1">{t('title')} (EN)</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input-field" required /></div>
+                <div><label className="block text-sm text-white/60 mb-1">{t('title')} (AR)</label><input value={form.title_ar} onChange={e => setForm({ ...form, title_ar: e.target.value })} className="input-field" dir="rtl" /></div>
               </div>
               <div><label className="block text-sm text-white/60 mb-1">{t('event_type')}</label>
-                <select value={form.type} onChange={e => setForm({...form, type: e.target.value})} className="select-field">
+                <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className="select-field">
                   <option value="shoot">{t('shoot')}</option><option value="meeting">{t('meeting')}</option><option value="deadline">{t('deadline')}</option><option value="general">{t('general')}</option>
                 </select></div>
-              <div><label className="block text-sm text-white/60 mb-1">{t('date')}</label><input type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} className="input-field" required /></div>
+              <div><label className="block text-sm text-white/60 mb-1">{t('date')}</label><input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="input-field" required /></div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-sm text-white/60 mb-1">Start</label><input type="time" value={form.start_time} onChange={e => setForm({...form, start_time: e.target.value})} className="input-field" /></div>
-                <div><label className="block text-sm text-white/60 mb-1">End</label><input type="time" value={form.end_time} onChange={e => setForm({...form, end_time: e.target.value})} className="input-field" /></div>
+                <div><label className="block text-sm text-white/60 mb-1">Start</label><input type="time" value={form.start_time} onChange={e => setForm({ ...form, start_time: e.target.value })} className="input-field" /></div>
+                <div><label className="block text-sm text-white/60 mb-1">End</label><input type="time" value={form.end_time} onChange={e => setForm({ ...form, end_time: e.target.value })} className="input-field" /></div>
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" className="btn-primary flex-1">{t('add_event')}</button>

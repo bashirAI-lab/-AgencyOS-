@@ -2,7 +2,7 @@ const Database = require('better-sqlite3');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
-const DB_PATH = process.env.DB_PATH || './db/agencyos.db';
+const DB_PATH = process.env.DATABASE_URL || path.join(__dirname, 'database.db');
 
 let db;
 

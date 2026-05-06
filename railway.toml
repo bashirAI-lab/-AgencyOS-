@@ -1,0 +1,8 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm run install:all && npm run build"
+
+[deploy]
+startCommand = "npm start"
+healthCheckPath = "/api/health"
+healthCheckTimeout = 100
