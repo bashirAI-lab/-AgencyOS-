@@ -77,13 +77,25 @@ const db = getDb();
 (async () => {
   try {
     const hash = await bcrypt.hash('password123', 10);
-    const updateStmt = db.prepare('UPDATE users SET password = ? WHERE username = ?');
-    updateStmt.run(hash, 'omar_creator');
-    updateStmt.run(hash, 'sarah_pm');
-    updateStmt.run(hash, 'admin');
-    console.log('🔒 Demo user passwords force-updated');
+    console.log('✅ omar_creator hash:', hash.substring(0, 20));
+
+    // Check table info for debugging
+    const tableInfo = db.prepare('PRAGMA table_info(users)').all();
+    console.log('📑 users table info:', tableInfo);
+
+    // Use INSERT OR REPLACE to ensure they exist and have correct data
+    const upsertStmt = db.prepare(`
+      INSERT OR REPLACE INTO users (id, username, password, role, full_name, email) 
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+
+    upsertStmt.run('admin-001', 'admin', hash, 'super_admin', 'Abdalla Bashir', 'admin@agencyos.com');
+    upsertStmt.run('sarah-001', 'sarah_pm', hash, 'project_manager', 'Sarah Al-Rashid', 'sarah@agencyos.com');
+    upsertStmt.run('omar-001', 'omar_creator', hash, 'content_creator', 'Omar Hassan', 'omar@agencyos.com');
+    
+    console.log('🔒 Demo users ensured (INSERT OR REPLACE)');
   } catch (err) {
-    console.error('❌ Failed to force update passwords:', err);
+    console.error('❌ Failed to ensure demo users:', err);
   }
 })();
 
