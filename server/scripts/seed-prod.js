@@ -13,18 +13,14 @@ async function seedUsers(force = false) {
   ];
 
   const checkUser = db.prepare('SELECT id FROM users WHERE username = ?');
-  const insertUser = db.prepare(`INSERT INTO users (id, username, email, password, full_name, full_name_ar, role) VALUES (?, ?, ?, ?, ?, ?, ?)`);
-  const updateUserPassword = db.prepare('UPDATE users SET password = ? WHERE username = ?');
+  const insertUser = db.prepare(`INSERT OR IGNORE INTO users (id, username, email, password, full_name, full_name_ar, role) VALUES (?, ?, ?, ?, ?, ?, ?)`);
+  const updateUser = db.prepare('UPDATE users SET password = ?, role = ?, full_name = ?, email = ? WHERE username = ?');
 
   for (const u of mainUsers) {
-    const existing = checkUser.get(u.username);
-    if (!existing) {
-      insertUser.run(u.id, u.username, u.email, u.password, u.full_name, u.full_name_ar, u.role);
-      console.log(`✅ Created user: ${u.username}`);
-    } else if (force) {
-      updateUserPassword.run(u.password, u.username);
-      console.log(`✅ Updated password for user: ${u.username}`);
-    }
+    insertUser.run(u.id, u.username, u.email, u.password, u.full_name, u.full_name_ar, u.role);
+    // Always update to ensure correct password and role even if user existed
+    updateUser.run(u.password, u.role, u.full_name, u.email, u.username);
+    console.log(`✅ Ensured user exists and is up to date: ${u.username}`);
   }
 
   // Add more demo users if we are doing a full seed
