@@ -83,17 +83,17 @@ const db = getDb();
     const tableInfo = db.prepare('PRAGMA table_info(users)').all();
     console.log('📑 users table info:', tableInfo);
 
-    // Use INSERT OR REPLACE to ensure they exist and have correct data
+    // Use INSERT OR REPLACE with the exact schema from seed-prod.js
     const upsertStmt = db.prepare(`
-      INSERT OR REPLACE INTO users (id, username, password, role, full_name, email) 
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT OR REPLACE INTO users (id, username, email, password, full_name, full_name_ar, role) 
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
 
-    upsertStmt.run('admin-001', 'admin', hash, 'super_admin', 'Abdalla Bashir', 'admin@agencyos.com');
-    upsertStmt.run('sarah-001', 'sarah_pm', hash, 'project_manager', 'Sarah Al-Rashid', 'sarah@agencyos.com');
-    upsertStmt.run('omar-001', 'omar_creator', hash, 'content_creator', 'Omar Hassan', 'omar@agencyos.com');
+    upsertStmt.run('admin-001', 'admin', 'admin@agencyos.com', hash, 'Abdalla Bashir', 'عبدالله بشير', 'super_admin');
+    upsertStmt.run('sarah-001', 'sarah_pm', 'sarah@agencyos.com', hash, 'Sarah Al-Rashid', 'سارة الراشد', 'project_manager');
+    upsertStmt.run('omar-001', 'omar_creator', 'omar@agencyos.com', hash, 'Omar Hassan', 'عمر حسن', 'content_creator');
     
-    console.log('🔒 Demo users ensured (INSERT OR REPLACE)');
+    console.log('🔒 Demo users ensured (Pattern matched to seed script)');
   } catch (err) {
     console.error('❌ Failed to ensure demo users:', err);
   }
