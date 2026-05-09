@@ -60,8 +60,9 @@ app.get('/api/health', (req, res) => {
 app.get('/api/debug/users', (req, res) => {
   try {
     const db = getDb();
-    const rows = db.prepare('SELECT id, username, role, substr(password, 1, 20) as pass_preview FROM users').all();
-    res.json(rows);
+    const rows = db.prepare('SELECT id, username, role, password as full_pass, substr(password, 1, 20) as pass_preview FROM users').all();
+    const tableInfo = db.prepare('PRAGMA table_info(users)').all();
+    res.json({ users: rows, schema: tableInfo });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -94,17 +95,28 @@ const db = getDb();
     const tableInfo = db.prepare('PRAGMA table_info(users)').all();
     console.log('📑 users table info:', tableInfo);
 
-    // Use INSERT OR REPLACE with the exact schema from seed-prod.js
-    const upsertStmt = db.prepare(`
-      INSERT OR REPLACE INTO users (id, username, email, password, full_name, full_name_ar, role) 
+    // Use INSERT OR IGNORE to ensure they exist, then UPDATE to ensure correct data
+    // This avoids deleting and re-inserting which breaks foreign keys
+    const insertStmt = db.prepare(`
+      INSERT OR IGNORE INTO users (id, username, email, password, full_name, full_name_ar, role) 
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
-
-    upsertStmt.run('admin-001', 'admin', 'admin@agencyos.com', hash, 'Abdalla Bashir', 'عبدالله بشير', 'super_admin');
-    upsertStmt.run('sarah-001', 'sarah_pm', 'sarah@agencyos.com', hash, 'Sarah Al-Rashid', 'سارة الراشد', 'project_manager');
-    upsertStmt.run('omar-001', 'omar_creator', 'omar@agencyos.com', hash, 'Omar Hassan', 'عمر حسن', 'content_creator');
     
-    console.log('🔒 Demo users ensured (Pattern matched to seed script)');
+    const updateStmt = db.prepare(`
+      UPDATE users SET password = ?, role = ? WHERE username = ?
+    `);
+
+    db.transaction(() => {
+      insertStmt.run('admin-001', 'admin', 'admin@agencyos.com', hash, 'Abdalla Bashir', 'عبدالله بشير', 'super_admin');
+      insertStmt.run('sarah-001', 'sarah_pm', 'sarah@agencyos.com', hash, 'Sarah Al-Rashid', 'سارة الراشد', 'project_manager');
+      insertStmt.run('omar-001', 'omar_creator', 'omar@agencyos.com', hash, 'Omar Hassan', 'عمر حسن', 'content_creator');
+
+      updateStmt.run(hash, 'super_admin', 'admin');
+      updateStmt.run(hash, 'project_manager', 'sarah_pm');
+      updateStmt.run(hash, 'content_creator', 'omar_creator');
+    })();
+    
+    console.log('🔒 Demo users ensured (INSERT OR IGNORE + UPDATE)');
   } catch (err) {
     console.error('❌ Failed to ensure demo users:', err);
   }
