@@ -2,12 +2,66 @@ const { getDb } = require('../db/init');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 
+async function seedUsers(force = false) {
+  const db = getDb();
+  const hashedPassword = await bcrypt.hash('password123', 10);
+  
+  const mainUsers = [
+    { id: uuidv4(), username: 'admin', email: 'admin@agencyos.com', password: hashedPassword, full_name: 'Abdalla Bashir', full_name_ar: 'عبدالله بشير', role: 'super_admin' },
+    { id: uuidv4(), username: 'sarah_pm', email: 'sarah@agencyos.com', password: hashedPassword, full_name: 'Sarah Al-Rashid', full_name_ar: 'سارة الراشد', role: 'project_manager' },
+    { id: uuidv4(), username: 'omar_creator', email: 'omar@agencyos.com', password: hashedPassword, full_name: 'Omar Hassan', full_name_ar: 'عمر حسن', role: 'content_creator' }
+  ];
+
+  const checkUser = db.prepare('SELECT id FROM users WHERE username = ?');
+  const insertUser = db.prepare(`INSERT INTO users (id, username, email, password, full_name, full_name_ar, role) VALUES (?, ?, ?, ?, ?, ?, ?)`);
+  const updateUserPassword = db.prepare('UPDATE users SET password = ? WHERE username = ?');
+
+  for (const u of mainUsers) {
+    const existing = checkUser.get(u.username);
+    if (!existing) {
+      insertUser.run(u.id, u.username, u.email, u.password, u.full_name, u.full_name_ar, u.role);
+      console.log(`✅ Created user: ${u.username}`);
+    } else if (force) {
+      updateUserPassword.run(u.password, u.username);
+      console.log(`✅ Updated password for user: ${u.username}`);
+    }
+  }
+
+  // Add more demo users if we are doing a full seed
+  if (!force) {
+    const extraUsers = [
+      { id: uuidv4(), username: 'layla_creator', email: 'layla@agencyos.com', password: hashedPassword, full_name: 'Layla Ahmed', full_name_ar: 'ليلى أحمد', role: 'content_creator' },
+      { id: uuidv4(), username: 'khalid_creator', email: 'khalid@agencyos.com', password: hashedPassword, full_name: 'Khalid Mansour', full_name_ar: 'خالد منصور', role: 'content_creator' },
+      { id: uuidv4(), username: 'nora_creator', email: 'nora@agencyos.com', password: hashedPassword, full_name: 'Nora Salem', full_name_ar: 'نورة سالم', role: 'content_creator' },
+      { id: uuidv4(), username: 'yusuf_creator', email: 'yusuf@agencyos.com', password: hashedPassword, full_name: 'Yusuf Ali', full_name_ar: 'يوسف علي', role: 'content_creator' },
+      { id: uuidv4(), username: 'amira_creator', email: 'amira@agencyos.com', password: hashedPassword, full_name: 'Amira Khalil', full_name_ar: 'أميرة خليل', role: 'content_creator' },
+      { id: uuidv4(), username: 'hassan_creator', email: 'hassan@agencyos.com', password: hashedPassword, full_name: 'Hassan Younis', full_name_ar: 'حسن يونس', role: 'content_creator' },
+      { id: uuidv4(), username: 'dina_creator', email: 'dina@agencyos.com', password: hashedPassword, full_name: 'Dina Farouk', full_name_ar: 'دينا فاروق', role: 'content_creator' },
+      { id: uuidv4(), username: 'tariq_creator', email: 'tariq@agencyos.com', password: hashedPassword, full_name: 'Tariq Nabil', full_name_ar: 'طارق نبيل', role: 'content_creator' },
+      { id: uuidv4(), username: 'mona_creator', email: 'mona@agencyos.com', password: hashedPassword, full_name: 'Mona Saeed', full_name_ar: 'منى سعيد', role: 'content_creator' },
+      { id: uuidv4(), username: 'faisal_creator', email: 'faisal@agencyos.com', password: hashedPassword, full_name: 'Faisal Rami', full_name_ar: 'فيصل رامي', role: 'content_creator' },
+      { id: uuidv4(), username: 'reem_creator', email: 'reem@agencyos.com', password: hashedPassword, full_name: 'Reem Othman', full_name_ar: 'ريم عثمان', role: 'content_creator' },
+      { id: uuidv4(), username: 'zaid_creator', email: 'zaid@agencyos.com', password: hashedPassword, full_name: 'Zaid Kareem', full_name_ar: 'زيد كريم', role: 'content_creator' },
+      { id: uuidv4(), username: 'sami_snap', email: 'sami@agencyos.com', password: hashedPassword, full_name: 'Sami Snapchat', full_name_ar: 'سامي سناب', role: 'content_creator' },
+      { id: uuidv4(), username: 'marketing1', email: 'marketing@agencyos.com', password: hashedPassword, full_name: 'Ahmed Marketing', full_name_ar: 'أحمد التسويق', role: 'marketing_team' },
+      { id: uuidv4(), username: 'production1', email: 'production@agencyos.com', password: hashedPassword, full_name: 'Ali Production', full_name_ar: 'علي الإنتاج', role: 'production_team' },
+    ];
+
+    for (const u of extraUsers) {
+      if (!checkUser.get(u.username)) {
+        insertUser.run(u.id, u.username, u.email, u.password, u.full_name, u.full_name_ar, u.role);
+      }
+    }
+  }
+}
+
 async function seed() {
   const db = getDb();
   
   console.log('🌱 Seeding AgencyOS production database...');
   
-  // Clear existing data (safe because this only runs if users table is empty)
+  // Clear existing data (only if you want a complete fresh start)
+  // For safety, we only do this if specifically requested or if DB is empty
   db.exec(`
     DELETE FROM notifications;
     DELETE FROM tasks;
@@ -26,35 +80,9 @@ async function seed() {
     DELETE FROM users;
   `);
 
-  const hashedPassword = bcrypt.hashSync('password123', 10);
+  await seedUsers();
+  const users = db.prepare('SELECT * FROM users').all();
 
-  // ===== USERS =====
-  const users = [
-    { id: uuidv4(), username: 'admin', email: 'admin@agencyos.com', password: hashedPassword, full_name: 'Abdalla Bashir', full_name_ar: 'عبدالله بشير', role: 'super_admin' },
-    { id: uuidv4(), username: 'sarah_pm', email: 'sarah@agencyos.com', password: hashedPassword, full_name: 'Sarah Al-Rashid', full_name_ar: 'سارة الراشد', role: 'project_manager' },
-    { id: uuidv4(), username: 'omar_creator', email: 'omar@agencyos.com', password: hashedPassword, full_name: 'Omar Hassan', full_name_ar: 'عمر حسن', role: 'content_creator' },
-    { id: uuidv4(), username: 'layla_creator', email: 'layla@agencyos.com', password: hashedPassword, full_name: 'Layla Ahmed', full_name_ar: 'ليلى أحمد', role: 'content_creator' },
-    { id: uuidv4(), username: 'khalid_creator', email: 'khalid@agencyos.com', password: hashedPassword, full_name: 'Khalid Mansour', full_name_ar: 'خالد منصور', role: 'content_creator' },
-    { id: uuidv4(), username: 'nora_creator', email: 'nora@agencyos.com', password: hashedPassword, full_name: 'Nora Salem', full_name_ar: 'نورة سالم', role: 'content_creator' },
-    { id: uuidv4(), username: 'yusuf_creator', email: 'yusuf@agencyos.com', password: hashedPassword, full_name: 'Yusuf Ali', full_name_ar: 'يوسف علي', role: 'content_creator' },
-    { id: uuidv4(), username: 'amira_creator', email: 'amira@agencyos.com', password: hashedPassword, full_name: 'Amira Khalil', full_name_ar: 'أميرة خليل', role: 'content_creator' },
-    { id: uuidv4(), username: 'hassan_creator', email: 'hassan@agencyos.com', password: hashedPassword, full_name: 'Hassan Younis', full_name_ar: 'حسن يونس', role: 'content_creator' },
-    { id: uuidv4(), username: 'dina_creator', email: 'dina@agencyos.com', password: hashedPassword, full_name: 'Dina Farouk', full_name_ar: 'دينا فاروق', role: 'content_creator' },
-    { id: uuidv4(), username: 'tariq_creator', email: 'tariq@agencyos.com', password: hashedPassword, full_name: 'Tariq Nabil', full_name_ar: 'طارق نبيل', role: 'content_creator' },
-    { id: uuidv4(), username: 'mona_creator', email: 'mona@agencyos.com', password: hashedPassword, full_name: 'Mona Saeed', full_name_ar: 'منى سعيد', role: 'content_creator' },
-    { id: uuidv4(), username: 'faisal_creator', email: 'faisal@agencyos.com', password: hashedPassword, full_name: 'Faisal Rami', full_name_ar: 'فيصل رامي', role: 'content_creator' },
-    { id: uuidv4(), username: 'reem_creator', email: 'reem@agencyos.com', password: hashedPassword, full_name: 'Reem Othman', full_name_ar: 'ريم عثمان', role: 'content_creator' },
-    { id: uuidv4(), username: 'zaid_creator', email: 'zaid@agencyos.com', password: hashedPassword, full_name: 'Zaid Kareem', full_name_ar: 'زيد كريم', role: 'content_creator' },
-    { id: uuidv4(), username: 'sami_snap', email: 'sami@agencyos.com', password: hashedPassword, full_name: 'Sami Snapchat', full_name_ar: 'سامي سناب', role: 'content_creator' },
-    { id: uuidv4(), username: 'marketing1', email: 'marketing@agencyos.com', password: hashedPassword, full_name: 'Ahmed Marketing', full_name_ar: 'أحمد التسويق', role: 'marketing_team' },
-    { id: uuidv4(), username: 'production1', email: 'production@agencyos.com', password: hashedPassword, full_name: 'Ali Production', full_name_ar: 'علي الإنتاج', role: 'production_team' },
-  ];
-
-  const insertUser = db.prepare(`INSERT INTO users (id, username, email, password, full_name, full_name_ar, role) VALUES (?, ?, ?, ?, ?, ?, ?)`);
-  for (const u of users) {
-    insertUser.run(u.id, u.username, u.email, u.password, u.full_name, u.full_name_ar, u.role);
-  }
-  console.log(`✅ Created ${users.length} users`);
 
   // ===== CREATORS (14 + 1 agency) =====
   const platforms = ['tiktok', 'instagram', 'x', 'snapchat', 'youtube'];
@@ -225,7 +253,7 @@ async function seed() {
   console.log('🎉 Production database seeded successfully!');
 }
 
-module.exports = { seed };
+module.exports = { seed, seedUsers };
 
 if (require.main === module) {
   seed().catch(console.error);
