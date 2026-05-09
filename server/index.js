@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
@@ -70,7 +71,22 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Initialize DB and start
-getDb();
+const db = getDb();
+
+// Force update demo user passwords on every startup to resolve production login issues
+(async () => {
+  try {
+    const hash = await bcrypt.hash('password123', 10);
+    const updateStmt = db.prepare('UPDATE users SET password = ? WHERE username = ?');
+    updateStmt.run(hash, 'omar_creator');
+    updateStmt.run(hash, 'sarah_pm');
+    updateStmt.run(hash, 'admin');
+    console.log('🔒 Demo user passwords force-updated');
+  } catch (err) {
+    console.error('❌ Failed to force update passwords:', err);
+  }
+})();
+
 startCronJobs();
 
 app.listen(PORT, () => {
