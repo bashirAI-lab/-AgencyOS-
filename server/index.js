@@ -56,18 +56,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Debug endpoint (Temporary)
-app.get('/api/debug/users', (req, res) => {
-  try {
-    const db = getDb();
-    const rows = db.prepare('SELECT id, username, role, password as full_pass, substr(password, 1, 20) as pass_preview FROM users').all();
-    const tableInfo = db.prepare('PRAGMA table_info(users)').all();
-    res.json({ users: rows, schema: tableInfo });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, '../client/dist');
@@ -89,14 +77,7 @@ const db = getDb();
 (async () => {
   try {
     const hash = await bcrypt.hash('password123', 10);
-    console.log('✅ omar_creator hash:', hash.substring(0, 20));
-
-    // Check table info for debugging
-    const tableInfo = db.prepare('PRAGMA table_info(users)').all();
-    console.log('📑 users table info:', tableInfo);
-
-    // Use INSERT OR IGNORE to ensure they exist, then UPDATE to ensure correct data
-    // This avoids deleting and re-inserting which breaks foreign keys
+    
     const insertStmt = db.prepare(`
       INSERT OR IGNORE INTO users (id, username, email, password, full_name, full_name_ar, role) 
       VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -116,9 +97,9 @@ const db = getDb();
       updateStmt.run(hash, 'content_creator', 'omar_creator');
     })();
     
-    console.log('🔒 Demo users ensured (INSERT OR IGNORE + UPDATE)');
+    console.log('🔒 Demo users synchronized successfully');
   } catch (err) {
-    console.error('❌ Failed to ensure demo users:', err);
+    console.error('❌ Failed to synchronize demo users:', err);
   }
 })();
 

@@ -12,15 +12,12 @@ router.post('/login', (req, res) => {
     const { username, password } = req.body;
     const db = getDb();
     const user = db.prepare('SELECT * FROM users WHERE username = ? OR email = ?').get(username, username);
-    console.log('🔍 Login attempt:', username);
-    console.log('👤 User found:', user ? 'yes' : 'no');
     
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     
     const validPassword = bcrypt.compareSync(password, user.password);
-    console.log('🔑 Password match:', validPassword);
     
     if (!validPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
