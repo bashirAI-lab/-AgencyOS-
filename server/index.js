@@ -56,6 +56,17 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Debug endpoint (Temporary)
+app.get('/api/debug/users', (req, res) => {
+  try {
+    const db = getDb();
+    const rows = db.prepare('SELECT id, username, role, substr(password, 1, 20) as pass_preview FROM users').all();
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, '../client/dist');
