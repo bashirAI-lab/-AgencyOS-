@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api';
-import { Plus, X, CheckCircle, Clock, AlertCircle, User } from 'lucide-react';
+import { Plus, X, CheckCircle, Clock, AlertCircle, User, ListTodo } from 'lucide-react';
 
 const STATUS_COLORS = { pending: 'badge-yellow', in_progress: 'badge-blue', completed: 'badge-green' };
 const STATUS_ICONS = { pending: Clock, in_progress: AlertCircle, completed: CheckCircle };
