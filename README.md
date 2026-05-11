@@ -11,6 +11,14 @@
   </p>
 </div>
 
+## 🌐 Live Demo
+**[https://agencyos-production-36bc.up.railway.app](https://agencyos-production-36bc.up.railway.app)**
+
+Demo credentials:
+| Role | Username | Password |
+|------|----------|----------|
+| Admin | admin | password123 |
+
 ---
 
 ## 📖 Overview
@@ -79,6 +87,8 @@
 - **JWT Auth** - Secure, stateless JSON Web Token authentication
 
 ## 🚀 Getting Started
+
+If you'd like to explore the platform immediately without local setup, visit our **[Live Demo](https://agencyos-production-36bc.up.railway.app)**.
 
 ### Prerequisites
 - **Node.js** (v18 or higher)
